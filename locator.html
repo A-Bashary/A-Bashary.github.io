@@ -1,0 +1,683 @@
+
+<!DOCTYPE html>
+<html lang="en">
+	
+	
+<!-- Mirrored from www.doubledouble.ca/locator.php by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 11 May 2017 02:37:36 GMT -->
+<head>
+		<meta charset="utf-8" />
+		<title>Double Double Pizza &amp; Chicken</title>
+		
+		<link rel="stylesheet" href="css/reset.css" />
+		<link rel="stylesheet" href="css/960.css" />
+		<link rel="stylesheet" href="css/fonts.css" />
+		<link rel="stylesheet" href="css/style.css" />
+	    <link rel="stylesheet" href="css/themes/default/default.css" type="text/css" media="screen" />
+		<link rel="stylesheet" href="css/nivo-slider.css" type="text/css" media="screen" />
+		<link rel="stylesheet" type="text/css" href="js/shadowbox/shadowbox.css">
+
+		
+		<!--[if IE 8]>
+        <link rel="stylesheet" type="text/css" href="css/ie8.css">
+		<![endif]-->
+
+		<!--[if IE 7]>
+        <link rel="stylesheet" type="text/css" href="css/ie7.css">
+		<![endif]-->
+		
+		<script type="text/javascript" src="../ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+		<script type="text/javascript" src="twitter/jquery.tweet.min.html"></script>
+		<script type="text/javascript" src="js/shadowbox/shadowbox.js"></script>
+
+
+		<script type='text/javascript'>
+		    $(document).ready(function(){
+		    	Shadowbox.init();
+
+		    
+		        $(".tweet").tweet({
+		            username: "dbldblpizza",
+		            count: 1,
+		            auto_join_text_default: "we said,",
+		            auto_join_text_ed: "we",
+		            auto_join_text_ing: "we were",
+		            auto_join_text_reply: "we replied to",
+		            auto_join_text_url: "we were checking out",
+		            loading_text: "loading tweets..."
+		        });
+		    });
+		</script> 		
+
+		<script type="text/javascript">
+		
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-5309061-48']);
+		  _gaq.push(['_trackPageview']);
+		
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		
+		</script>
+		
+		<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+		<script type="text/javascript">			
+			var geocoder;
+			var map;
+			var lat;
+			var long;
+			
+			function loadIt( phone, id )
+			{
+				var latlng 	= new google.maps.LatLng(45.652527, -83.381961);
+				var myOptions = {
+					zoom		: 8,
+					center		: latlng,
+					mapTypeId	: google.maps.MapTypeId.ROADMAP
+				}
+				map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+			    for( i=0; i < myLocations.length; i++ )
+			    {
+			    	if( myLocations[i][0] == phone )
+			    	{
+						var marker = new google.maps.Marker({
+							map			: map, 
+							position	: new google.maps.LatLng( myLocations[i][3], myLocations[i][4] ),
+							icon		: 'assets/map_pin.png',
+							title		: myLocations[i][1],
+							cntent		: myLocations[i][1] + "<br>" + myLocations[i][2] + "<br>" + myLocations[i][0]
+						});
+						
+					    google.maps.event.addListener(marker, 'click', function() {
+					    	infowindow = new google.maps.InfoWindow({ content: $(this).attr('cntent') });
+					    	infowindow.open( map, this );
+					    }); 
+					    
+						lat = myLocations[i][3];
+						long = myLocations[i][4];
+			    	}
+			    }			    
+			    
+			    map.setCenter( new google.maps.LatLng( lat, long ) );
+			    $( '#subNav' + id ).toggle();
+			    
+			}
+			
+			function viewStore( lat, long, indx )
+			{
+				var latlng 	= new google.maps.LatLng(lat, long);
+				var myOptions = {
+					zoom		: 15,
+					center		: latlng,
+					mapTypeId	: google.maps.MapTypeId.ROADMAP
+				}
+				map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+				
+				var marker = new google.maps.Marker({
+					map			: map, 
+					position	: new google.maps.LatLng( lat, long ),
+					icon		: 'assets/map_pin.png',
+					title		: myLocations[indx][1],
+					cntent		: myLocations[indx][1] + "<br>" + myLocations[indx][2] + "<br>" + myLocations[indx][0]
+				});
+				
+			    google.maps.event.addListener(marker, 'click', function() {
+			    	infowindow = new google.maps.InfoWindow({ content: $(this).attr('cntent') });
+			    	infowindow.open( map, this );
+			    }); 
+			    
+			    map.setCenter( new google.maps.LatLng( lat, long ) );
+			}
+
+
+			function getGeoCoords() 
+			{
+				initialize();
+				
+				var address = $('#address').val();
+				if( address == "Address, City, Province" )
+					var address = '';
+					
+				geocoder.geocode( { 'address': address}, function(results, status) 
+				{
+					if (status == google.maps.GeocoderStatus.OK) 
+					{
+						map.setCenter(results[0].geometry.location);
+						var marker = new google.maps.Marker({
+							map			: map, 
+							position	: results[0].geometry.location
+						});
+						
+						// Add circle overlay and bind to marker
+						var circle = new google.maps.Circle({
+						  map		: map,
+						  radius	: 8046,    // 5 miles in metres
+						  fillColor	: '#f69679'
+						});
+						circle.bindTo('center', marker, 'position');
+
+						
+						map.setZoom( 11 );
+					} 
+					else 
+					{
+						alert( "We could not locate this address" + address );
+					}
+				});
+			}
+
+			function initialize() 
+			{
+				geocoder 	= new google.maps.Geocoder();
+				var latlng 	= new google.maps.LatLng(45.652527, -83.381961);
+				var myOptions = {
+					zoom		: 5,
+					center		: latlng,
+					mapTypeId	: google.maps.MapTypeId.ROADMAP
+				}
+				map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+			    
+			    for( i=0; i < myLocations.length; i++ )
+			    {
+					var marker = new google.maps.Marker({
+						map			: map, 
+						position	: new google.maps.LatLng( myLocations[i][3], myLocations[i][4] ),
+						icon		: 'assets/map_pin.png',
+						title		: myLocations[i][1],
+						cntent		: myLocations[i][1] + "<br>" + myLocations[i][2] + "<br>" + myLocations[i][0]
+					});
+
+				    google.maps.event.addListener(marker, 'click', function() {
+				    	infowindow = new google.maps.InfoWindow({ content: $(this).attr('cntent') });
+				    	infowindow.open( map, this );
+				    }); 
+			    }
+			}
+			
+			var myLocations = new Array();
+			myLocations[0]	= [ '416-241-0000', '332 Main St N.', 'Brampton', '43.69304', '-79.76950'];
+myLocations[1]	= [ '519-756-0000', '190 King George Rd.', 'Brantford', '43.17333', '-80.27792'];
+myLocations[2]	= [ '416-241-0000', '2950 Kennedy Road', 'Scarborough', '43.810861', '-79.301373'];
+myLocations[3]	= [ '519-244-0000', '115 Chistopher Dr.', 'Cambridge', '43.34705', '-80.29980'];
+myLocations[4]	= [ '416-241-0000', '145 Rexdale Blvd.', 'Etobicoke', '43.71158', '-79.56688'];
+myLocations[5]	= [ '519-244-0000', '666 Woolwich St.', 'Guelph', '43.55876', '-80.26882'];
+myLocations[6]	= [ '905-528-0000', '225 John St. S.', 'Hamilton', '43.24984', '-79.86890'];
+myLocations[7]	= [ '416-241-0000', '1117 O Connor Dr.', 'Toronto', '43.710783', '-79.308723'];
+myLocations[8]	= [ '613-547-0000', '546 Bath Rd.', 'Kingston', '44.23822', '-76.53833'];
+myLocations[9]	= [ '519-244-0000', '153 King St. W.', 'Kitchener', '43.45086', '-80.49194'];
+myLocations[10]	= [ '519-244-0000', '3101 Kingsway Dr.', 'Kitchener', '43.42239', '-80.44359'];
+myLocations[11]	= [ '519-473-0000', '332 Wharncliffe Rd N. ', 'London', '42.99507', '-81.26648'];
+myLocations[12]	= [ '416-241-0000', '3095 Hurontario St.', 'Mississauga', '43.58218', '-79.61894'];
+myLocations[13]	= [ '416-241-0000', '1650 Jane St.', 'North York', '43.70139', '-79.50348'];
+myLocations[14]	= [ '416-241-0000', '2530 Sixth Line', 'Oakville', '43.47677', '-79.72602'];
+myLocations[15]	= [ '905-728-0000', '1335 Simcoe St. N.', 'Oshawa', '43.93281', '-78.87890'];
+myLocations[16]	= [ '905-728-0000', '200 John St. W. ', 'Oshawa', '43.89342', '-78.86807'];
+myLocations[17]	= [ '416-241-0000', '91 Rylander Blvd', 'Scarborough', '43.79768', '-79.15376'];
+myLocations[18]	= [ '416-241-0000', '2829 Kingston Rd.', 'Scarborough', '43.72119', '-79.23682'];
+myLocations[19]	= [ '416-241-0000', '1060 Kennedy Rd.', 'Scarborough', '43.74940', '-79.27502'];
+myLocations[20]	= [ '416-241-0000', '1221 Markham Rd.', 'Scarborough', '43.77893', '-79.23267'];
+myLocations[21]	= [ '905-934-0000', '184 Scott St.', 'St. Catharines', '43.18244', '-79.24780'];
+myLocations[22]	= [ '807-345-0000', '80 Empress Ave. S.', 'Thunder Bay', '48.44105', '-89.24581'];
+myLocations[23]	= [ '905-248-0000', '1119 Fennel Ave.', 'Hamilton', '43.225737', '-79.828584'];
+myLocations[24]	= [ '519-244-0000', '347 Erb St. W', 'Waterloo', '43.45500', '-80.54619'];
+myLocations[25]	= [ '519-244-0000', '95 Saginaw Pkway', 'Cambridge', '43.391434', '-80.302025'];
+myLocations[26]	= [ '613-938-7272', '1610 Brookdale Ave ', 'Cornwall', '45.0324934', '-74.7564795'];
+myLocations[27]	= [ '416-241-0000', '1785 Queen St', 'Brampton', '43.725923', '-79.715120'];
+myLocations[28]	= [ '416-241-0000', '5493 Yonge St', 'Toronto', '43.8623885', '-79.435082'];
+			
+			function codeAddress( address ) 
+			{
+				address = address + ' Ontario, Canada';
+				geocoder.geocode( { 'address': address}, function(results, status) 
+				{
+					if (status == google.maps.GeocoderStatus.OK) 
+					{
+						map.setCenter(results[0].geometry.location);
+						var marker = new google.maps.Marker({
+							map: map, 
+							position: results[0].geometry.location
+						});
+					} 
+				});
+			}
+			
+			$(window).load(function(){
+				initialize();
+				
+							});
+		</script>
+
+	</head>
+	
+	<body onload="initialize();">
+
+	
+		<div class="container_16">
+			
+			<!-- Header -->
+			<div class="header">
+				<a href="index-2.html" class="logo"></a>
+				<ul class="topNav">
+					<li class="title">Menu</li>
+					<li class="nav-chicken"><a href="menu-chicken.php">Chicken</a></li>
+					<li class="nav-wings"><a href="menu-wings.html">Wings</a></li>
+					<li class="nav-pizza"><a href="menu-pizza.html">Pizza</a></li>
+					<li class="nav-panzo"><a href="menu-panzo.html">Panzo</a></li>
+					<li class="nav-ribs"><a href="menu-ribs.html">Ribs</a></li>
+					<li class="nav-sides"><a href="menu-sides.html">Sides</a></li>
+					<li class="nav-toppings"><a href="menu-toppings.html">Toppings</a></li>
+				</ul>
+				<div class="phone"><img src="assets/phone.png" alt="phone" width="560" height="94" /></div>
+			</div>
+			<div class="clear"></div><!-- Header Ends -->
+
+			<!-- Social Bar -->
+			<div class="grid_12 socialBar">
+				<div id="fb-root" style="display: block; margin-top: -15px; margin-left: 10px; position: relative;"></div><script src="../connect.facebook.net/en_US/all.js#xfbml=1"></script><fb:like href="https://www.facebook.com/pages/Double-Double-Pizza-Chicken/266777963334240" send="true" width="450" show_faces="false" colorscheme="dark" font="verdana"></fb:like>
+			</div>
+			<div class="grid_4 socialBar">
+				<a href="http://www.twitter.com/dbldblpizza" class="twitter">Follow us on Twitter</a>
+			</div>
+			<div class="clear"></div><!-- Social Bar Ends -->
+
+			<!-- Content -->
+			<div class="grid_16 homeContent">
+				
+				<!-- Main Nav -->
+				<ul class="mainNav">
+					<li class="nav-specials"><a href="specials.html">Specials</a></li>
+					<li class="nav-store"><a href="locator.html">Locate a Store</a></li>
+					<li class="nav-about"><a href="about.html">About Us</a></li>
+					<li class="nav-contact"><a href="contact.html">Contact Us</a></li>
+					<li class="nav-order"><a href="https://doubledouble.webordering.ca/doubledouble/">&nbsp;</a></li>
+				</ul>
+				<div class="clear"></div><!-- Main Nav Ends -->
+				
+		
+						
+				<!-- Content Box -->
+				<div class="mainContentBox boxShadow topRadius">
+					<h3 class="topRadius flushLeft">Locate a Store</h3>
+					
+					<div class="boxContent">
+					
+						<div class="grid_5">
+							<div class="locationSelector">
+								<b>Select Your Area</b>
+								
+								<ul>
+									<li class="note">
+										Click your region below to expand
+									</li>
+									<li onclick="loadIt( '416-241-0000', 0 );">
+										<strong>Greater Toronto Area</strong><br>
+										(416) 241&middot;00&middot;00<br>
+									</li>
+									
+										<ul id="subNav0">
+										
+											<li onclick="viewStore( '43.69304', '-79.76950', '1' )">
+												<strong>332 Main St N.</strong><br>
+												Brampton
+											</li>
+													
+											<li onclick="viewStore( '43.810861', '-79.301373', '3' )">
+												<strong>2950 Kennedy Road</strong><br>
+												Scarborough
+											</li>
+													
+											<li onclick="viewStore( '43.71158', '-79.56688', '5' )">
+												<strong>145 Rexdale Blvd.</strong><br>
+												Etobicoke
+											</li>
+													
+											<li onclick="viewStore( '43.710783', '-79.308723', '8' )">
+												<strong>1117 O Connor Dr.</strong><br>
+												Toronto
+											</li>
+													
+											<li onclick="viewStore( '43.58218', '-79.61894', '14' )">
+												<strong>3095 Hurontario St.</strong><br>
+												Mississauga
+											</li>
+													
+											<li onclick="viewStore( '43.70139', '-79.50348', '15' )">
+												<strong>1650 Jane St.</strong><br>
+												North York
+											</li>
+													
+											<li onclick="viewStore( '43.47677', '-79.72602', '16' )">
+												<strong>2530 Sixth Line</strong><br>
+												Oakville
+											</li>
+													
+											<li onclick="viewStore( '43.79768', '-79.15376', '19' )">
+												<strong>91 Rylander Blvd</strong><br>
+												Scarborough
+											</li>
+													
+											<li onclick="viewStore( '43.72119', '-79.23682', '20' )">
+												<strong>2829 Kingston Rd.</strong><br>
+												Scarborough
+											</li>
+													
+											<li onclick="viewStore( '43.74940', '-79.27502', '21' )">
+												<strong>1060 Kennedy Rd.</strong><br>
+												Scarborough
+											</li>
+													
+											<li onclick="viewStore( '43.77893', '-79.23267', '22' )">
+												<strong>1221 Markham Rd.</strong><br>
+												Scarborough
+											</li>
+													
+											<li onclick="viewStore( '43.725923', '-79.715120', '32' )">
+												<strong>1785 Queen St</strong><br>
+												Brampton
+											</li>
+													
+											<li onclick="viewStore( '43.8623885', '-79.435082', '33' )">
+												<strong>5493 Yonge St</strong><br>
+												Toronto
+											</li>
+																							</ul>
+										
+									<li onclick="loadIt( '905-728-0000', 1 );">
+										<strong>Oshawa/Courtice</strong><br>
+										(905) 728&middot;00&middot;00<br>
+									</li>
+									
+										<ul id="subNav1">
+										
+											<li onclick="viewStore( '43.93281', '-78.87890', '17' )">
+												<strong>1335 Simcoe St. N.</strong><br>
+												Oshawa
+											</li>
+													
+											<li onclick="viewStore( '43.89342', '-78.86807', '18' )">
+												<strong>200 John St. W. </strong><br>
+												Oshawa
+											</li>
+																							</ul>
+										
+									<li onclick="loadIt( '519-244-0000', 2 );">
+										<strong>Cambridge/Guelph</strong><br>
+										(519) 244&middot;00&middot;00<br>
+									</li>
+									
+										<ul id="subNav2">
+										
+											<li onclick="viewStore( '43.34705', '-80.29980', '4' )">
+												<strong>115 Chistopher Dr.</strong><br>
+												Cambridge
+											</li>
+													
+											<li onclick="viewStore( '43.55876', '-80.26882', '6' )">
+												<strong>666 Woolwich St.</strong><br>
+												Guelph
+											</li>
+													
+											<li onclick="viewStore( '43.45086', '-80.49194', '10' )">
+												<strong>153 King St. W.</strong><br>
+												Kitchener
+											</li>
+													
+											<li onclick="viewStore( '43.42239', '-80.44359', '11' )">
+												<strong>3101 Kingsway Dr.</strong><br>
+												Kitchener
+											</li>
+													
+											<li onclick="viewStore( '43.45500', '-80.54619', '27' )">
+												<strong>347 Erb St. W</strong><br>
+												Waterloo
+											</li>
+													
+											<li onclick="viewStore( '43.391434', '-80.302025', '30' )">
+												<strong>95 Saginaw Pkway</strong><br>
+												Cambridge
+											</li>
+																							</ul>
+	
+									<li onclick="loadIt( '519-244-0000', 3 );">
+										<strong>Kitchener/Waterloo</strong><br>
+										(519) 244&middot;00&middot;00<br>
+									</li>
+									
+										<ul id="subNav3">
+										
+											<li onclick="viewStore( '43.34705', '-80.29980', '4' )">
+												<strong>115 Chistopher Dr.</strong><br>
+												Cambridge
+											</li>
+													
+											<li onclick="viewStore( '43.55876', '-80.26882', '6' )">
+												<strong>666 Woolwich St.</strong><br>
+												Guelph
+											</li>
+													
+											<li onclick="viewStore( '43.45086', '-80.49194', '10' )">
+												<strong>153 King St. W.</strong><br>
+												Kitchener
+											</li>
+													
+											<li onclick="viewStore( '43.42239', '-80.44359', '11' )">
+												<strong>3101 Kingsway Dr.</strong><br>
+												Kitchener
+											</li>
+													
+											<li onclick="viewStore( '43.45500', '-80.54619', '27' )">
+												<strong>347 Erb St. W</strong><br>
+												Waterloo
+											</li>
+													
+											<li onclick="viewStore( '43.391434', '-80.302025', '30' )">
+												<strong>95 Saginaw Pkway</strong><br>
+												Cambridge
+											</li>
+																							</ul>
+	
+									
+	
+									<li onclick="loadIt( '905-528-0000', 5 );">
+										<strong>Hamilton</strong><br>
+										(905) 528&middot;00&middot;00<br>
+									</li>
+									
+										<ul id="subNav5">
+										
+											<li onclick="viewStore( '43.24984', '-79.86890', '7' )">
+												<strong>225 John St. S.</strong><br>
+												Hamilton
+											</li>
+																							</ul>
+	
+									<li onclick="loadIt( '416-241-00.00', 6 );">
+										<strong>Milton</strong><br>
+										(416) 241&middot;00&middot;00<br>
+									</li>
+									
+										<ul id="subNav6">
+																				</ul>
+	
+									<li onclick="loadIt( '519-473-0000', 7 );">
+										<strong>London</strong><br>
+										(519) 473&middot;00&middot;00<br>
+									</li>
+									
+										<ul id="subNav7">
+										
+											<li onclick="viewStore( '42.99507', '-81.26648', '13' )">
+												<strong>332 Wharncliffe Rd N. </strong><br>
+												London
+											</li>
+																							</ul>
+	
+<!--
+									<li onclick="loadIt( '905-934-0000', 8 );">
+										<strong>St. Catherines</strong><br>
+										(905) 934&middot;00&middot;00<br>
+									</li>
+									
+										<ul id="subNav8">
+										
+											<li onclick="viewStore( '43.18244', '-79.24780', '23' )">
+												<strong>184 Scott St.</strong><br>
+												St. Catharines
+											</li>
+																							</ul>
+	
+-->
+									<li onclick="loadIt( '519-756-0000', 9 );">
+										<strong>Brantford</strong><br>
+										(519) 756&middot;00&middot;00<br>
+									</li>
+									
+										<ul id="subNav9">
+										
+											<li onclick="viewStore( '43.17333', '-80.27792', '2' )">
+												<strong>190 King George Rd.</strong><br>
+												Brantford
+											</li>
+																							</ul>
+	
+	<!--
+									<li onclick="loadIt( '905-339-0000', 10 );">
+										<strong>Burlington</strong><br>
+										(905) 339&middot;00&middot;00<br>
+									</li>
+									
+										<ul id="subNav10">
+																				</ul>
+	
+	-->
+									<li onclick="loadIt( '613-547-0000', 11 );">
+										<strong>Kingston</strong><br>
+										(613) 547&middot;00&middot;00<br>
+									</li>
+									
+										<ul id="subNav11">
+										
+											<li onclick="viewStore( '44.23822', '-76.53833', '9' )">
+												<strong>546 Bath Rd.</strong><br>
+												Kingston
+											</li>
+																							</ul>
+	
+									<li onclick="loadIt( '807-345-0000', 12 );">
+										<strong>Thunder Bay</strong><br>
+										(807) 345&middot;00&middot;00<br>					
+									</li>
+									
+										<ul id="subNav12">
+										
+											<li onclick="viewStore( '48.44105', '-89.24581', '24' )">
+												<strong>80 Empress Ave. S.</strong><br>
+												Thunder Bay
+											</li>
+																							</ul>
+										
+										<li onclick="loadIt( '613-938-7272', 13 );">
+										<strong>Cornwall</strong><br>
+										(613) 938&middot;7272<br>					
+									</li>
+									
+										<ul id="subNav13">
+										
+											<li onclick="viewStore( '45.0324934', '-74.7564795', '31' )">
+												<strong>1610 Brookdale Ave </strong><br>
+												Cornwall
+											</li>
+																							</ul>
+	
+								</ul>
+							</div>
+						</div>
+						
+						<div class="grid_9">
+							<h2>Find a Location</h2>
+							
+							<p style="clear: left; width: 550px;">
+								Find a Double Double Location by entering your address in the field below or by selecting an Area from the column.
+							</p>
+							
+	<!-- 						<form action="/locations.php" method="post" style="width: 600px; margin-top: 5px; margin-bottom: 5px;"> -->
+								<input type="text" name="" id="address" value="Address, City, Province" class="searchTextBox" onfocus="if( this.value == 'Address, City, Province' ) { this.value = ''; }" style="display: inline-block; float: left; margin-right: 10px; width: 400px;">
+								<input type="button" name="submit" value="&nbsp;" class="btnSearch" onclick="getGeoCoords()">
+	<!-- 						</form> -->
+							
+							<div class="map" id="map_canvas"></div>
+						</div>
+						<div class="clear"></div>
+						
+					</div>
+					<br>
+					
+				</div><!-- Content Box Ends -->
+
+			
+				<!-- Inside Footer -->
+				<div class="insideFooter topRadius">
+					<div class="grid_5 twitterTweet">
+						<div class="tweet">
+						</div>
+					</div>
+					
+					<div class="grid_9">
+						<h4>Join our eClub <span>Receive delicious great offers directly to your email.</span></h4>
+						
+						<form action="http://mppmarketinggroup.us1.list-manage2.com/subscribe/post?u=d4615fddf593195be6a8e77ae&amp;id=b5c267c6ed" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="eclubForm footerForm validate" target="_blank">
+							<label>First Name</label>
+							<label>Last Name</label>
+							
+							<input type="text" name="FNAME" value="" class="eclubTextBox">
+							<input type="text" name="LNAME" value="" class="eclubTextBox">
+
+							<label>Email Address</label>
+							<label>&nbsp;</label>
+							
+							<input type="text" name="EMAIL" value="" class="eclubTextBox">
+							<input type="submit" name="submit" value="Join" class="eclubSubmit">
+
+						</form>
+					</div>
+					<div class="clear"></div><!-- Inside Footer Ends -->
+
+					<!-- Footer -->
+					<div class="grid_6 footerCopy" style="margin-right: 0px;">
+						&copy; 2017 Double Double Pizza & Chicken<br><!-- Developed by <a style="color:#ABAAAA" href="http://www.mppmarketinggroup.com">MPP Marketing Group Inc.</a> -->
+					</div>
+					<div class="grid_10 footerCopy" style="margin-left: 0px; margin-right: 0px; width: 550px !important;">
+						<ul class="footerNav">
+							<li><a href="specials.html">Specials</a></li>
+							<li>|</li>
+							<li><a href="locator.html">Store Locator</a></li>
+							<li>|</li>
+							<li><a href="https://doubledouble.webordering.ca/doubledouble/">Online Ordering</a></li>
+							<li>|</li>
+							<li><a href="guarantee.html">Guarantee</a></li>
+							<li>|</li>
+							<li><a href="privacy.html">Privacy Policy</a></li>
+							<li>|</li>
+							<li><a href="contact.html">Contact</a></li>
+						</ul>
+					</div>
+					<div class="clear"></div><!-- Footer Ends -->
+
+				</div>
+
+							
+			</div><!-- Content Ends -->
+						
+		</div>
+		<div style="clear:both;"></div>
+		<div style="text-align:center;font-size:9px;color:gray;">Products may not be as pictured. Minimum delivery orders $10.99. Taxes are extra. <BR>Prices are subject to change without notice. Debit surcharges apply. Limited time offer. Some restrictions may apply.<BR><BR></div> 
+
+
+	</body>
+	
+
+<!-- Mirrored from www.doubledouble.ca/locator.php by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 11 May 2017 02:37:36 GMT -->
+</html>
